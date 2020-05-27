@@ -81,7 +81,36 @@ class Solver:
 
     def BFS(self):
         """ Apply BFS to the maze """
-        pass
+        
+        print("Apply BFS on maze size {}".format(self.maze.shape))
+        time_a = time.time()
+
+        queue = [self.start]
+        visited = {self.start: 1}
+        previous_node = [None] * self.maze.shape[1] * self.maze.shape[0]
+
+        while len(queue) > 0:
+            vertex = queue.pop(0)
+
+            if vertex == self.end:
+                break
+
+            for neighbour in self._get_node_neighbours(vertex, visited):
+                queue.append(neighbour)
+                visited[neighbour] = 1
+                previous_node[neighbour[1] * self.maze.shape[0] + neighbour[0]] = vertex
+
+        # figure out the path
+        path = []
+        vertex = self.end
+
+        while vertex is not None:
+            path.append(vertex)
+            vertex = previous_node[vertex[1] * self.maze.shape[0] + vertex[0]]
+
+        time_b = time.time()
+        print("Finished BFS. Took {} seconds".format(time_b - time_a))
+        return path
 
     def path_image(self, path: List[Tuple[int, int]], maze_image: Image, file_name: str) -> None:
         path_array = np.zeros((self.maze.shape[1], self.maze.shape[0], 3), dtype=np.uint8)
@@ -109,7 +138,7 @@ if __name__ == '__main__':
     maze_image = Image.open(file_name).convert('L')
 
     solver = Solver(maze_image)
-    dfs = solver.DFS()
+    dfs = solver.BFS()
 
     maze_image = maze_image.convert('RGB')
-    solver.path_image(dfs, maze_image=maze_image, file_name='maze_path.gif')
+    solver.path_image(dfs, maze_image=maze_image, file_name='maze_path_bfs.gif')
