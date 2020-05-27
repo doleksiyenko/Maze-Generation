@@ -43,7 +43,9 @@ def generate_maze(size: int) -> np.array:
                                             distance=2,
                                             state=0))
         wall_list.remove(frontier_cell)
-        print(len(wall_list))
+        if len(wall_list) % 100 == 0:
+            print(len(wall_list))
+        
 
     return maze
 
@@ -86,7 +88,7 @@ def get_cell_walls(position: Tuple[int, int], maze: np.array, distance: int,
 
 
 if __name__ == '__main__':
-    maze = generate_maze(50)
+    maze = generate_maze(2000)
     maze *= 255
     print(maze)
     maze_image = Image.fromarray(maze)
