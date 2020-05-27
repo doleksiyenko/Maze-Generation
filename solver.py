@@ -83,12 +83,23 @@ class Solver:
         """ Apply BFS to the maze """
         pass
 
-    def path_image(self, path: List[Tuple[int, int]], file_name: str) -> None:
-        path_array = np.zeros(self.maze.shape)
-        for pos in path:
-            path_array[pos[1], pos[0]] = 128
+    def path_image(self, path: List[Tuple[int, int]], maze_image: Image, file_name: str) -> None:
+        path_array = np.zeros((self.maze.shape[1], self.maze.shape[0], 3), dtype=np.uint8)
+        maze_array = np.array(maze_image, dtype=np.uint8)
 
-        maze_path = self.maze - path_array
+        scaler = 1.0
+        for pos in path:
+            # red channel
+            path_array[pos[1], pos[0], 0] = 10 * (scaler)
+            # green channel
+            path_array[pos[1], pos[0], 1] = 189 * (scaler)
+            # blue channel
+            path_array[pos[1], pos[0], 2] = 37 * (scaler)
+            
+            # option to fade the path:
+            # scale *= 0.999 
+
+        maze_path = maze_array - path_array
         image = Image.fromarray(maze_path)
         image.save(file_name)
         print("Path generated to file: {}".format(file_name))
@@ -99,4 +110,6 @@ if __name__ == '__main__':
 
     solver = Solver(maze_image)
     dfs = solver.DFS()
-    solver.path_image(dfs, 'maze_path.gif')
+
+    maze_image = maze_image.convert('RGB')
+    solver.path_image(dfs, maze_image=maze_image, file_name='maze_path.gif')
