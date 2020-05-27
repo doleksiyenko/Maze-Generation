@@ -17,13 +17,16 @@ def generate_maze(size: int) -> np.array:
     # start at a random cell in the maze
     rand_x = random.randint(0, len(maze) - 1)
     rand_y = random.randint(0, len(maze) - 1)
+
     print("Cell {}".format((rand_x, rand_y)))
+
     # mark this random cell as a passage
     maze[rand_y, rand_x] = 1
+
     # create the wall_list, and add the 'frontier' cells to it.
     wall_list = get_cell_walls((rand_x, rand_y), maze, 2, 0)
     print("Wall List: {}".format(wall_list))
-    # print(maze)
+
     while len(wall_list) > 0:
         frontier_cell = wall_list[random.randint(0, len(wall_list) - 1)]
         frontier_neighbours = get_cell_walls(frontier_cell, maze, distance=2,
@@ -32,21 +35,24 @@ def generate_maze(size: int) -> np.array:
         if len(frontier_neighbours) < 2:
             rand_frontier_neighbour = frontier_neighbours[
                 random.randint(0, len(frontier_neighbours) - 1)]
+
             x = (rand_frontier_neighbour[0] + frontier_cell[0]) // 2
             y = (rand_frontier_neighbour[1] + frontier_cell[1]) // 2
+
             # set the cell between frontier cell and neighbour cell to passage
             maze[y, x] = 1
             maze[frontier_cell[1], frontier_cell[0]] = 1
+
             # find the frontier cells of the frontier cell and add
             # them to the wall list
             wall_list.extend(get_cell_walls(frontier_cell, maze=maze,
                                             distance=2,
                                             state=0))
         wall_list.remove(frontier_cell)
+
         if len(wall_list) % 100 == 0:
             print(len(wall_list))
         
-
     return maze
 
 
@@ -88,7 +94,7 @@ def get_cell_walls(position: Tuple[int, int], maze: np.array, distance: int,
 
 
 if __name__ == '__main__':
-    maze = generate_maze(2000)
+    maze = generate_maze(100)
     maze *= 255
     print(maze)
     maze_image = Image.fromarray(maze)
