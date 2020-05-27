@@ -28,8 +28,8 @@ def generate_maze(size: int) -> np.array:
         frontier_cell = wall_list[random.randint(0, len(wall_list) - 1)]
         frontier_neighbours = get_cell_walls(frontier_cell, maze, distance=2,
                                              state=1)
-        # to prevent loops
-        if len(frontier_neighbours) < 3:
+        # to prevent too many loops (can be set to 2 to prevent any loops)
+        if len(frontier_neighbours) < 2:
             rand_frontier_neighbour = frontier_neighbours[
                 random.randint(0, len(frontier_neighbours) - 1)]
             x = (rand_frontier_neighbour[0] + frontier_cell[0]) // 2
@@ -39,10 +39,11 @@ def generate_maze(size: int) -> np.array:
             maze[frontier_cell[1], frontier_cell[0]] = 1
             # find the frontier cells of the frontier cell and add
             # them to the wall list
-            wall_list.extend(get_cell_walls(frontier_cell, maze,
+            wall_list.extend(get_cell_walls(frontier_cell, maze=maze,
                                             distance=2,
                                             state=0))
         wall_list.remove(frontier_cell)
+        print(len(wall_list))
 
     return maze
 
@@ -85,7 +86,7 @@ def get_cell_walls(position: Tuple[int, int], maze: np.array, distance: int,
 
 
 if __name__ == '__main__':
-    maze = generate_maze(100)
+    maze = generate_maze(50)
     maze *= 255
     print(maze)
     maze_image = Image.fromarray(maze)
